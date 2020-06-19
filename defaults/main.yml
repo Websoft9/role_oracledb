@@ -9,4 +9,4 @@ oracle_server_meta:
     lower_name: "xe"
   enterprise:
     name: "EE"
-    lower_name: "xe"
+    lower_name: "ee"
