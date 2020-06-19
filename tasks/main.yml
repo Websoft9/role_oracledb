@@ -1,26 +1,26 @@
 - name: Install preinstall oracle
   get_url:
-    url: https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/oracle-database-preinstall-18c-1.0-1.el7.x86_64.rpm
+    url: https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/oracle-database-preinstall-{{oracle_version}}-1.0-1.el7.x86_64.rpm
     dest: /root
 
 - name: Preinstall oracle
   shell: 
-    cmd: yum -y localinstall oracle-database-preinstall-18c-1.0-1.el7.x86_64.rpm
-    chdir: /root   
+    cmd: yum -y localinstall oracle-database-preinstall-{{oracle_version}}-1.0-1.el7.x86_64.rpm
+    chdir: /root 
 
 - name: Download oracle
   get_url:
-    url: https://download.oracle.com/otn-pub/otn_software/db-express/oracle-database-xe-18c-1.0-1.x86_64.rpm
+    url: https://download.oracle.com/otn-pub/otn_software/db-express/oracle-database-{{oracle_server_meta.community.lower_name}}-{{oracle_version}}-1.0-1.x86_64.rpm
     dest: /root
 
 - name: Install oracle
   shell: 
-    cmd: yum -y localinstall oracle-database-xe-18c-1.0-1.x86_64.rpm
+    cmd: yum -y localinstall oracle-database-{{oracle_server_meta.community.lower_name}}-{{oracle_version}}-1.0-1.x86_64.rpm
     chdir: /root
 
 # Oracle configuration
-- name: Set 
-  shell: (echo {{oracle_password}}; echo {{oracle_password}};) | /etc/init.d/oracle-xe-18c configure
+- name: configure oracle database,listener
+  shell: (echo {{oracle_password}}; echo {{oracle_password}};) | /etc/init.d/oracle-{{oracle_server_meta.community.lower_name}}-{{oracle_version}} configure
 
 - name: change to oracle
   shell: su oracle
@@ -31,11 +31,11 @@
     owner: oracle
     block: |
       export ORACLE_BASE=/opt/oracle 
-      export ORACLE_HOME=/opt/oracle/product/18c/dbhomeXE
-      export ORACLE_SID=XE
+      export ORACLE_HOME=/opt/oracle/product/{{oracle_version}}/dbhome{{oracle_server_meta.community.name}}
+      export ORACLE_SID={{oracle_server_meta.community.name}}
       export PATH=$PATH:$ORACLE_HOME/bin
 
-- name: source ok
+- name: source env
   shell: source /home/oracle/.bash_profile
 # Rename oracle service and  restart oracle
 
@@ -43,7 +43,7 @@
   shell: systemctl daemon-reload
 
 - name: Rename service
-  shell: ln -sf /run/systemd/generator.late/oracle-xe-18c.service    /run/systemd/generator.late/oracle.service
+  shell: ln -sf /run/systemd/generator.late/oracle-{{oracle_server_meta.community.lower_name}}-{{oracle_version}}.service    /run/systemd/generator.late/oracle.service
 
 - name: Restart oracle.service
   service:
@@ -54,7 +54,7 @@
   shell: |
     ln -sf /opt/oracle  /data/wwwroot
     ln -sf /opt/oracle/config /data/config
-    ln -sf /opt/oracle/cfgtoollogs/dbca/XE   /data/logs
+    ln -sf /opt/oracle/cfgtoollogs/dbca/{{oracle_server_meta.community.name}}   /data/logs
 
 # check service state
 - name: Check oracle Service     
