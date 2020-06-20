@@ -1,5 +1,5 @@
 #oracle_download_url: https://download.oracle.com/otn-pub/otn_software/db-express/oracle-database-xe-18c-1.0-1.x86_64.rpm
-oracle_password: "123456"
+oracle_password: "oracle123456"
 oracle_version: "18c"
 oracle_server: "community"
 
