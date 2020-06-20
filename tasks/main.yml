@@ -18,6 +18,9 @@
     cmd: yum -y localinstall oracle-database-{{oracle_server_meta.community.lower_name}}-{{oracle_version}}-1.0-1.x86_64.rpm
     chdir: /root
 
+- name: show config file 
+  shell: echo "/etc/init.d/oracle-{{oracle_server_meta.community.lower_name}}-{{oracle_version}}"
+
 # Oracle configuration
 - name: configure oracle database,listener
   shell: (echo {{oracle_password}}; echo {{oracle_password}};) | /etc/init.d/oracle-{{oracle_server_meta.community.lower_name}}-{{oracle_version}} configure
@@ -43,17 +46,18 @@
   shell: systemctl daemon-reload
 
 - name: Rename service
-  shell: ln -sf /run/systemd/generator.late/oracle-{{oracle_server_meta.community.lower_name}}-{{oracle_version}}.service    /run/systemd/generator.late/oracle.service
+  shell: ln -sf /run/systemd/generator.late/oracle-{{oracle_server_meta.community.lower_name}}-{{oracle_version}}.service  /lib/systemd/system/oracle.service
 
 - name: Restart oracle.service
   service:
-    name: oracle.service
+    name: oracle-xe-18c
     state: restarted
+    enable: yes
 
 - name: set soft link
   shell: |
-    ln -sf /opt/oracle  /data/wwwroot
-    ln -sf /opt/oracle/config /data/config
+    ln -sf /opt/oracle  /data/oracle
+    ln -sf /opt/oracle/config /data/oracle/config
     ln -sf /opt/oracle/cfgtoollogs/dbca/{{oracle_server_meta.community.name}}   /data/logs
 
 # check service state
@@ -65,4 +69,4 @@
 # Check version,
 # must use sudo sh -c to solve the no-root permission
 - name: check version
-  shell: sudo sh -c "echo ` rpm -qa |grep oracle-database-xe` “>> /data/logs/install_version.txt"
+  shell: sudo sh -c "echo ` rpm -qa |grep oracle-database-xe` >> /data/logs/install_version.txt"
