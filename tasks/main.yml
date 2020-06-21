@@ -2,11 +2,23 @@
   get_url:
     url: https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/oracle-database-preinstall-{{oracle_version}}-1.0-1.el7.x86_64.rpm
     dest: /root
+  when: ansible_distribution == "CentOS"
 
 - name: Preinstall oracle
   shell: 
     cmd: yum -y localinstall oracle-database-preinstall-{{oracle_version}}-1.0-1.el7.x86_64.rpm
-    chdir: /root 
+    chdir: /root
+  when: ansible_distribution == "CentOS"
+
+- name: Yum 
+  shell: 
+    cmd: wget http://public-yum.oracle.com/public-yum-ol7.repo
+    chdir: /etc/yum.repos.d
+  when: ansible_distribution == "OracleLinux"
+
+- name: Yum  update
+  shell:  yum repolist all
+  when: ansible_distribution == "OracleLinux"
 
 - name: Download oracle
   get_url:
