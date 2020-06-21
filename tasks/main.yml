@@ -10,13 +10,13 @@
     chdir: /root
   when: ansible_distribution == "CentOS"
 
-- name: Yum 
+- name: OracleLinux config yum.repos.d 
   shell: 
     cmd: wget http://public-yum.oracle.com/public-yum-ol7.repo
     chdir: /etc/yum.repos.d
   when: ansible_distribution == "OracleLinux"
 
-- name: Yum  update
+- name: OracleLinux yum install
   shell:  yum repolist all
   when: ansible_distribution == "OracleLinux"
 
@@ -57,14 +57,14 @@
 - name: Reload service
   shell: systemctl daemon-reload
 
-- name: Rename service
-  shell: ln -sf /run/systemd/generator.late/oracle-{{oracle_server_meta.community.lower_name}}-{{oracle_version}}.service  /lib/systemd/system/oracle.service
-
 - name: Restart oracle.service
   service:
     name: oracle-xe-18c
     state: restarted
     enable: yes
+
+- name: Rename service
+  shell: ln -sf /run/systemd/generator.late/oracle-{{oracle_server_meta.community.lower_name}}-{{oracle_version}}.service  /lib/systemd/system/oracle.service
 
 - name: set soft link
   shell: |
