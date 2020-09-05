@@ -1,12 +1,12 @@
 - name: Install preinstall oracle
   get_url:
-    url: https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/oracle-database-preinstall-{{oracle_version}}-1.0-1.el7.x86_64.rpm
+    url: https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/oracle-database-preinstall-{{oracledb_version}}-1.0-1.el7.x86_64.rpm
     dest: /root
   when: ansible_distribution == "CentOS"
 
 - name: Preinstall oracle
   shell: 
-    cmd: yum -y localinstall oracle-database-preinstall-{{oracle_version}}-1.0-1.el7.x86_64.rpm
+    cmd: yum -y localinstall oracle-database-preinstall-{{oracledb_version}}-1.0-1.el7.x86_64.rpm
     chdir: /root
   when: ansible_distribution == "CentOS"
 
@@ -22,20 +22,20 @@
 
 - name: Download oracle
   get_url:
-    url: https://download.oracle.com/otn-pub/otn_software/db-express/oracle-database-{{oracle_server_meta.community.lower_name}}-{{oracle_version}}c-1.0-1.x86_64.rpm
+    url: https://download.oracle.com/otn-pub/otn_software/db-express/oracle-database-{{oracledb_server_meta.community.lower_name}}-{{oracledb_version}}c-1.0-1.x86_64.rpm
     dest: /root
 
 - name: Install oracle
   shell: 
-    cmd: yum -y localinstall oracle-database-{{oracle_server_meta.community.lower_name}}-{{oracle_version}}-1.0-1.x86_64.rpm
+    cmd: yum -y localinstall oracle-database-{{oracledb_server_meta.community.lower_name}}-{{oracledb_version}}-1.0-1.x86_64.rpm
     chdir: /root
 
 - name: show config file 
-  shell: echo "/etc/init.d/oracle-{{oracle_server_meta.community.lower_name}}-{{oracle_version}}"
+  shell: echo "/etc/init.d/oracle-{{oracledb_server_meta.community.lower_name}}-{{oracledb_version}}"
 
 # Oracle configuration
 - name: configure oracle database,listener
-  shell: (echo {{oracle_password}}; echo {{oracle_password}};) | /etc/init.d/oracle-{{oracle_server_meta.community.lower_name}}-{{oracle_version}} configure
+  shell: (echo {{oracledb_password}}; echo {{oracledb_password}};) | /etc/init.d/oracle-{{oracledb_server_meta.community.lower_name}}-{{oracledb_version}} configure
 
 - name: change to oracle
   shell: su oracle
@@ -46,8 +46,8 @@
     owner: oracle
     block: |
       export ORACLE_BASE=/opt/oracle 
-      export ORACLE_HOME=/opt/oracle/product/{{oracle_version}}/dbhome{{oracle_server_meta.community.name}}
-      export ORACLE_SID={{oracle_server_meta.community.name}}
+      export ORACLE_HOME=/opt/oracle/product/{{oracledb_version}}/dbhome{{oracledb_server_meta.community.name}}
+      export ORACLE_SID={{oracledb_server_meta.community.name}}
       export PATH=$PATH:$ORACLE_HOME/bin
 
 - name: source env
@@ -64,13 +64,13 @@
     enable: yes
 
 - name: Rename service
-  shell: ln -sf /run/systemd/generator.late/oracle-{{oracle_server_meta.community.lower_name}}-{{oracle_version}}.service  /lib/systemd/system/oracle.service
+  shell: ln -sf /run/systemd/generator.late/oracle-{{oracledb_server_meta.community.lower_name}}-{{oracledb_version}}.service  /lib/systemd/system/oracle.service
 
 - name: set soft link
   shell: |
     ln -sf /opt/oracle  /data/oracle
     ln -sf /opt/oracle/config /data/oracle/config
-    ln -sf /opt/oracle/cfgtoollogs/dbca/{{oracle_server_meta.community.name}}   /data/logs
+    ln -sf /opt/oracle/cfgtoollogs/dbca/{{oracle_serverdb_meta.community.name}}   /data/logs
 
 # check service state
 - name: Check oracle Service     
