@@ -1,5 +1,5 @@
 # oracledb password for administrator 【sys,system】
-oracledb_sys_password: "oracle123456"
+oracledb_password: "oracle123456"
 
 oracledb_number: "18"
 oracledb_version: "18c"
