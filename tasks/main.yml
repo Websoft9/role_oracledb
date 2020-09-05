@@ -49,7 +49,7 @@
 
 - name: Restart oracle.service
   service:
-    name: oracle-xe-18c
+    name: oracle-{{oracledb_server_meta.community.lower_name}}-{{oracledb_version}}
     state: restarted
     enable: yes
 
