@@ -19,8 +19,8 @@ oracledb_server_meta:
   community:
     name: "XE"
     lower_name: "xe"
-    download_url: https://download.oracle.com/otn-pub/otn_software/db-express/oracle-database-xe-{{oracle_version}}c-1.0-1.x86_64.rpm
+    download_url: https://download.oracle.com/otn-pub/otn_software/db-express/oracle-database-xe-{{oracledb_version}}c-1.0-1.x86_64.rpm
   enterprise:
     name: "EE"
     lower_name: "ee"
-    download_url: https://download.websoft9.com/oracle/oracle-database-ee-{{oracle_version}}e-1.0-1.x86_64.rpm
+    download_url: https://download.websoft9.com/oracle/oracle-database-ee-{{oracledb_version}}e-1.0-1.x86_64.rpm
