@@ -15,7 +15,7 @@ oracledb_users: []
 #    priv: 'example.*:ALL'
 
 # {{ testvar | lower }}
-oracle_server_meta:
+oracledb_server_meta:
   community:
     name: "XE"
     lower_name: "xe"
