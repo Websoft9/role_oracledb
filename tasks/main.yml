@@ -22,7 +22,7 @@
 
 - name: Download oracle
   get_url:
-    url: https://download.oracle.com/otn-pub/otn_software/db-express/oracle-database-{{oracle_server_meta.community.lower_name}}-{{oracle_version}}-1.0-1.x86_64.rpm
+    url: https://download.oracle.com/otn-pub/otn_software/db-express/oracle-database-{{oracle_server_meta.community.lower_name}}-{{oracle_version}}c-1.0-1.x86_64.rpm
     dest: /root
 
 - name: Install oracle
