@@ -10,19 +10,9 @@
     chdir: /root
   when: ansible_distribution == "CentOS"
 
-- name: OracleLinux config yum.repos.d 
-  shell: 
-    cmd: wget http://public-yum.oracle.com/public-yum-ol7.repo
-    chdir: /etc/yum.repos.d
-  when: ansible_distribution == "OracleLinux"
-
-- name: OracleLinux yum install
-  shell:  yum repolist all
-  when: ansible_distribution == "OracleLinux"
-
 - name: Download oracle
   get_url:
-    url: https://download.oracle.com/otn-pub/otn_software/db-express/oracle-database-{{oracledb_server_meta.community.lower_name}}-{{oracledb_version}}c-1.0-1.x86_64.rpm
+    url: https://download.oracle.com/otn-pub/otn_software/db-express/oracle-database-{{oracledb_server_meta.community.lower_name}}-{{oracledb_version}}-1.0-1.x86_64.rpm
     dest: /root
 
 - name: Install oracle
