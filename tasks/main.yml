@@ -1,66 +1,83 @@
-- name: Install preinstall oracle
-  get_url:
-    url: https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/oracle-database-preinstall-{{oracledb_version}}-1.0-1.el7.x86_64.rpm
-    dest: /root
+# prepare
+- name: Create dir for as oracle database install_dir
+  file: path={{oracle_work_dir}} recurse=yes state=directory
+
+- block: 
+  - name: Download oracledb pre_install package
+    get_url:
+      url: https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/oracle-database-preinstall-{{oracledb_version}}-1.0-1.el7.x86_64.rpm
+      dest: '{{oracle_work_dir}}'
+
+  - name: Install Oracle pre_install 
+    shell:  yum -y localinstall oracle-database-preinstall-{{oracledb_version}}-1.0-1.el7.x86_64.rpm
+    chdir: '{{oracle_work_dir}}'
+
+  - name: Delete oracledb pre_install package 
+    shell: rm -rf {{oracle_work_dir}}/oracle-database-preinstall-*
+
   when: ansible_distribution == "CentOS"
 
-- name: Preinstall oracle
-  shell: 
-    cmd: yum -y localinstall oracle-database-preinstall-{{oracledb_version}}-1.0-1.el7.x86_64.rpm
-    chdir: /root
-  when: ansible_distribution == "CentOS"
+- name: Install Oracledb pre_install
+  yum:
+    name: oracle-database-preinstall-{{oracledb_version}}
+    update_cache: yes
+  when: ansible_distribution == "OracleLinux"
 
-- name: Download oracle
-  get_url:
-    url: https://download.oracle.com/otn-pub/otn_software/db-express/oracle-database-{{oracledb_server_meta.community.lower_name}}-{{oracledb_version}}-1.0-1.x86_64.rpm
-    dest: /root
+# install oracle database
+- name: Check the oracle package exists
+  stat: 
+    path: /data/db/oracle-database-ee-*.rpm
+  register: oracle_rpm_exists
 
-- name: Install oracle
-  shell: 
-    cmd: yum -y localinstall oracle-database-{{oracledb_server_meta.community.lower_name}}-{{oracledb_version}}-1.0-1.x86_64.rpm
-    chdir: /root
+- fail: msg="The Oracle database package was not detected. Please download it first"  
+  when: oracle_rpm_exists is defined and not oracle_rpm_exists.stdout
 
-- name: show config file 
-  shell: echo "/etc/init.d/oracle-{{oracledb_server_meta.community.lower_name}}-{{oracledb_version}}"
+- name: Install oracle database
+  shell: yum -y localinstall oracle-database-ee-*.rpm
+  chdir: '{{oracle_work_dir}}'
 
 # Oracle configuration
-- name: configure oracle database,listener
-  shell: (echo {{oracledb_password}}; echo {{oracledb_password}};) | /etc/init.d/oracle-{{oracledb_server_meta.community.lower_name}}-{{oracledb_version}} configure
+- name: Set oracle database password
+  shell: >
+    (echo {{oracledb_password}}; echo {{oracledb_password}};) | /etc/init.d/oracle-*-{{oracledb_version}} configure
 
-- name: change to oracle
-  shell: su oracle
-
-- name: set database directory
+- name: Oracle database configure
   blockinfile:
     path: /home/oracle/.bash_profile
     owner: oracle
     block: |
-      export ORACLE_BASE=/opt/oracle 
-      export ORACLE_HOME=/opt/oracle/product/{{oracledb_version}}/dbhome{{oracledb_server_meta.community.name}}
+      export ORACLE_BASE={{oracle_work_dir}} 
+      export ORACLE_HOME={{oracle_work_dir}}/product/{{oracledb_version}}/dbhome{{oracledb_server_meta.community.name}}
       export ORACLE_SID={{oracledb_server_meta.community.name}}
       export PATH=$PATH:$ORACLE_HOME/bin
+  become: true
+  become_user: oracle
 
-- name: source env
+- name: Souce environment variables
   shell: source /home/oracle/.bash_profile
-# Rename oracle service and  restart oracle
-
-- name: Reload service
-  shell: systemctl daemon-reload
+  become: true
+  become_user: oracle
 
 - name: Restart oracle.service
-  service:
+  systemd:
     name: oracle-{{oracledb_server_meta.community.lower_name}}-{{oracledb_version}}
     state: restarted
+    daemon_reload: yes
     enable: yes
 
-- name: Rename service
+- name: Rename service file
   shell: ln -sf /run/systemd/generator.late/oracle-{{oracledb_server_meta.community.lower_name}}-{{oracledb_version}}.service  /lib/systemd/system/oracle.service
 
-- name: set soft link
-  shell: |
-    ln -sf /opt/oracle  /data/oracle
-    ln -sf /opt/oracle/config /data/oracle/config
-    ln -sf /opt/oracle/cfgtoollogs/dbca/{{oracle_serverdb_meta.community.name}}   /data/logs
+- name: Create soft link for oracle database
+  file:
+    src: '{{item.src}}'
+    dest: '{{item.dest}}'
+    state: link
+    force: yes
+  with_items:
+    - {src: '{{oracle_work_dir}}/config/' ,dest: /data/config/oracle}
+    - {src: '{{oracle_work_dir}}/config/' ,dest: /data/oracle/config}
+    - {src: '{{oracle_work_dir}}/cfgtoollogs/dbca/{{oracle_serverdb_meta.community.name}}/',dest: /data/logs/oracle}
 
 # check service state
 - name: Check oracle Service     
