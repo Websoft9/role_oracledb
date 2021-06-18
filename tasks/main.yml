@@ -1,19 +1,19 @@
 # prepare
 - name: Create dir for as oracle database install_dir
-  file: path={{oracle_work_dir}} recurse=yes state=directory
+  file: path={{oracledb_work_dir}} recurse=yes state=directory
 
 - block: 
   - name: Download oracledb pre_install package
     get_url:
       url: https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/oracle-database-preinstall-{{oracledb_version}}-1.0-1.el7.x86_64.rpm
-      dest: '{{oracle_work_dir}}'
+      dest: '{{oracledb_work_dir}}'
 
   - name: Install Oracle pre_install 
     shell:  yum -y localinstall oracle-database-preinstall-{{oracledb_version}}-1.0-1.el7.x86_64.rpm
-    chdir: '{{oracle_work_dir}}'
+    chdir: '{{oracledb_work_dir}}'
 
   - name: Delete oracledb pre_install package 
-    shell: rm -rf {{oracle_work_dir}}/oracle-database-preinstall-*
+    shell: rm -rf {{oracledb_work_dir}}/oracle-database-preinstall-*
 
   when: ansible_distribution == "CentOS"
 
@@ -26,7 +26,7 @@
 # install oracle database
 - name: Check the oracle package exists
   stat: 
-    path: '{{oracle_work_dir}}/oracle-database-ee-*.rpm'
+    path: '{{oracledb_work_dir}}/oracle-database-ee-*.rpm'
   register: oracle_rpm_exists
 
 - fail: msg="The Oracle database package was not detected. Please download it first"  
@@ -34,7 +34,7 @@
 
 - name: Install oracle database
   shell: yum -y localinstall oracle-database-ee-*.rpm
-  chdir: '{{oracle_work_dir}}'
+  chdir: '{{oracledb_work_dir}}'
 
 # Oracle configuration
 - name: Set oracle database password
@@ -46,8 +46,8 @@
     path: /home/oracle/.bash_profile
     owner: oracle
     block: |
-      export ORACLE_BASE={{oracle_work_dir}} 
-      export ORACLE_HOME={{oracle_work_dir}}/product/{{oracledb_version}}/dbhome{{oracledb_server_meta.community.name}}
+      export ORACLE_BASE={{oracledb_work_dir}} 
+      export ORACLE_HOME={{oracledb_work_dir}}/product/{{oracledb_version}}/dbhome{{oracledb_server_meta.community.name}}
       export ORACLE_SID={{oracledb_server_meta.community.name}}
       export PATH=$PATH:$ORACLE_HOME/bin
   become: true
@@ -75,9 +75,9 @@
     state: link
     force: yes
   with_items:
-    - {src: '{{oracle_work_dir}}/config/' ,dest: /data/config/oracle}
-    - {src: '{{oracle_work_dir}}/config/' ,dest: /data/oracle/config}
-    - {src: '{{oracle_work_dir}}/cfgtoollogs/dbca/{{oracle_serverdb_meta.community.name}}/',dest: /data/logs/oracle}
+    - {src: '{{oracledb_work_dir}}/config/' ,dest: /data/config/oracle}
+    - {src: '{{oracledb_work_dir}}/config/' ,dest: /data/oracle/config}
+    - {src: '{{oracledb_work_dir}}/cfgtoollogs/dbca/{{oracle_serverdb_meta.community.name}}/',dest: /data/logs/oracle}
 
 # check service state
 - name: Check oracle Service     
