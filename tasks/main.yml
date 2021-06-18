@@ -26,7 +26,7 @@
 # install oracle database
 - name: Check the oracle package exists
   stat: 
-    path: /data/db/oracle-database-ee-*.rpm
+    path: '{{oracle_work_dir}}/oracle-database-ee-*.rpm'
   register: oracle_rpm_exists
 
 - fail: msg="The Oracle database package was not detected. Please download it first"  
