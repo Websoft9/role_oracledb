@@ -27,10 +27,10 @@
     paths: '{{oracledb_dir}}'
     patterns:
       - "oracle-database-ee-{{oracledb_version}}*.rpm"
-  register: oracle_package_exists
+  register: oracledb_package
 
 - fail: msg="The Oracle database package was not detected. Please download it first"  
-  when: oracle_package_exists is defined and not oracle_package_exists.files is not none
+  when: oracledb_package is defined and oracledb_package.files is none
 
 - name: Install oracle database
   shell: yum -y localinstall oracle-database-ee-{{oracledb_version}}*.rpm
