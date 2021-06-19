@@ -35,7 +35,7 @@
   when: oracle_rpm_exists is defined and not oracle_rpm_exists.stdout
 
 - name: Install oracle database
-  shell: yum -y localinstall oracle-database-ee-*.rpm
+  shell: yum -y localinstall oracle-database-ee-{{oracledb_version}}*.rpm
   args:
     chdir: '{{oracledb_dir}}'
 
