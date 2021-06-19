@@ -58,13 +58,25 @@
   become: true
   become_user: oracle
 
+- name: configure oracledb init file
+  shell: sed -i 's#<ORACLE_BASE>#/opt/oracle#g' /opt/oracle/product/19c/dbhome_1/dbs/initORACLEDB.ora
+
+- name: Create init dir for oracledb
+  file: path={{item}} recurse=yes state=directory
+  with_items:
+    - /opt/oracle/admin/orcl/adump
+    - /opt/oracle/fast_recovery_area
+
+- name: Set dir permissive for oracledb
+  shell: chown -R  oracle /opt/oracle/
+    
 - name: Restart oracle.service
   systemd:
     name: oracledb_ORCLCDB-{{oracledb_version}}
     state: restarted
     daemon_reload: yes
     enabled: yes
-
+ 
 - name: Create soft link for oracle database
   file:
     src: '{{item.src}}'
@@ -84,6 +96,7 @@
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/ORCLCDB.log ,dest: /data/logs/oracledb.log}
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: /data/logs/oracle}
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: /data/oracle/logs}
+    - {src: /opt/oracle/product/19c/dbhome_1/dbs/init.ora,dest: /opt/oracle/product/19c/dbhome_1/dbs/initORACLEDB.ora}
 
 # check service state
 - name: Check oracledb Service     
