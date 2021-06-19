@@ -26,7 +26,7 @@
   find: 
     paths: '{{oracledb_dir}}'
     patterns:
-      - "oracle-database-ee-19c-{{oracledb_version}}-*"
+      - "oracle-database-ee-{{oracledb_version}}*.rpm"
   register: oracle_package_exists
 
 - debug: var=oracle_package_exists
