@@ -39,4 +39,4 @@
         msg: Will install oracle {{oracledb_version}} database
 
   roles:
-    - {role: role_oracle, tags: "role_oracle"}  
+    - {role: role_oracledb, tags: "role_oracledb"}  
