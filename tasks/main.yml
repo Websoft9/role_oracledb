@@ -63,7 +63,7 @@
     name: oracledb_ORCLCDB-{{oracledb_version}}
     state: restarted
     daemon_reload: yes
-    enable: yes
+    enabled: yes
 
 - name: Create soft link for oracle database
   file:
