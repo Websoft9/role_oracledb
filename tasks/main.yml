@@ -30,7 +30,7 @@
   register: oracledb_package
 
 - fail: msg="The Oracle database package was not detected. Please download it first"  
-  when: oracledb_package is defined and oracledb_package.files is none
+  when: oracledb_package is defined and oracledb_package.files == []
 
 - name: Install oracle database, time is long, please be patient
   shell: yum -y localinstall oracle-database-ee-{{oracledb_version}}*.rpm
