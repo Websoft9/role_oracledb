@@ -11,15 +11,6 @@
       2: It's not an official copy\n"
       private: no
 
-  vars:
-    oracledb_select:
-      '1': 'y'
-      '1': 'Y'
-      '2': 'n'
-      '2': 'N'
-    oracledb_official: "{{oracledb_select[oracledb_selection]}}"
-
-  vars_prompt:
     - name: 'oracledb_version_selection'
       prompt: "\nPlease choose the number for OracleDB version [ 1/2 ] \n\n
       1: oracle 18(not support)\n
@@ -28,11 +19,18 @@
       default: 1
 
   vars:
+    oracledb_select:
+      '1': 'y'
+      '1': 'Y'
+      '2': 'n'
+      '2': 'N'
+    oracledb_official: "{{oracledb_select[oracledb_selection]}}"
+
+  vars:
     oracledb_version_select:
       '1': '18c'
       '2': '19c'
     oracledb_version: "{{oracledb_version_select[oracledb_version_selection]}}"
-
 
   pre_tasks:
     - debug:
