@@ -39,8 +39,7 @@
 
 # Oracle configuration
 - name: Set oracle database password
-  shell: >
-    (echo {{oracledb_password}}; echo {{oracledb_password}};) | /etc/init.d/oracle-*-{{oracledb_version}} configure
+  shell: (echo {{oracledb_password}}; echo {{oracledb_password}};) | /etc/init.d/oracledb_ORCLCDB-{{oracledb_version}} configure
 
 - name: Oracle database configure
   blockinfile:
