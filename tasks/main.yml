@@ -79,6 +79,8 @@
     - {src: /etc/oraInst.loc ,dest: /data/oracle/oraInst.loc}
     - {src: /etc/oratab ,dest: /data/config/oratab}
     - {src: /etc/oratab ,dest: /data/oracle/oratab}
+    - {src: '/etc/sysconfig/oracledb_ORCLCDB-{{oracledb_version}}.conf' ,dest: /data/config/oracledb.conf}
+    - {src: '/etc/sysconfig/oracledb_ORCLCDB-{{oracledb_version}}.conf' ,dest: /data/config/oracledb.conf}
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/ORCLCDB.log ,dest: /data/logs/oracledb.log}
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: /data/logs/oracle}
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: /data/oracle/logs}
