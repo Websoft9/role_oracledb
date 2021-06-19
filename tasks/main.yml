@@ -59,13 +59,13 @@
 
 - name: Restart oracle.service
   systemd:
-    name: oracle-{{oracledb_server_meta.community.lower_name}}-{{oracledb_version}}
+    name: oracledb_ORCLCDB-{{oracledb_version}}
     state: restarted
     daemon_reload: yes
     enable: yes
 
 - name: Rename service file
-  shell: ln -sf /run/systemd/generator.late/oracle-{{oracledb_server_meta.community.lower_name}}-{{oracledb_version}}.service  /lib/systemd/system/oracle.service
+  shell: ln -sf /run/systemd/generator.late/oracledb_ORCLCDB-{{oracledb_version}}.service  /lib/systemd/system/oracledb.service
 
 - name: Create soft link for oracle database
   file:
@@ -74,8 +74,8 @@
     state: link
     force: yes
   with_items:
-    - {src: '{{oracledb_dir}}/config/' ,dest: /data/config/oracle}
-    - {src: '{{oracledb_dir}}/config/' ,dest: /data/oracle/config}
+    - {src: '{{oracledb_dir}}/config/' ,dest: /data/config/oracledb}
+    - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/ORCLCDB.log ,dest: /data/logs/}
     - {src: '{{oracledb_dir}}/cfgtoollogs/dbca/{{oracle_serverdb_meta.community.name}}/',dest: /data/logs/oracle}
 
 # check service state
