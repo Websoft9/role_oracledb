@@ -13,8 +13,8 @@
 
     - name: 'oracledb_version_selection'
       prompt: "\nPlease choose the number for OracleDB version [ 1/2 ] \n\n
-      1: oracle 18(not support)\n
-      2: oracle 19(support)\n"
+      1: oracle database ee 18c(not support)\n
+      2: oracle database ee 19c(support)\n"
       private: no
       default: 1
 
