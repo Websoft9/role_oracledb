@@ -3,15 +3,15 @@
   - name: Download oracledb pre_install package
     get_url:
       url: https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/oracle-database-preinstall-{{oracledb_version}}-1.0-1.el7.x86_64.rpm
-      dest: '{{oracledb_dir}}'
+      dest: '{{oracledb_install_dir}}'
 
   - name: Install Oracle pre_install 
     shell:  yum -y localinstall oracle-database-preinstall-{{oracledb_version}}-1.0-1.el7.x86_64.rpm
     args:
-      chdir: '{{oracledb_dir}}'
+      chdir: '{{oracledb_install_dir}}'
 
   - name: Delete oracledb pre_install package 
-    shell: rm -rf {{oracledb_dir}}/oracle-database-preinstall-*
+    shell: rm -rf {{oracledb_install_dir}}/oracle-database-preinstall-*
 
   when: ansible_distribution == "CentOS"
 
@@ -24,7 +24,7 @@
 # install oracle database
 - name: Check the oracle package exists
   find: 
-    paths: '{{oracledb_dir}}'
+    paths: '{{oracledb_install_dir}}'
     patterns:
       - "oracle-database-ee-{{oracledb_version}}*.rpm"
   register: oracledb_package
@@ -35,7 +35,7 @@
 - name: Install oracle database, time is long, please be patient
   shell: yum -y localinstall oracle-database-ee-{{oracledb_version}}*.rpm
   args:
-    chdir: '{{oracledb_dir}}'
+    chdir: '{{oracledb_install_dir}}'
 
 # Oracle configuration
 - name: Set oracle database password, time is long, please be patient
@@ -46,9 +46,6 @@
     path: /home/oracle/.bash_profile
     owner: oracle
     block: |
-      export ORACLE_BASE={{oracledb_dir}} 
-      export ORACLE_HOME={{oracledb_dir}}/product/{{oracledb_version}}/dbhome{{oracledb_server_meta.community.name}}
-      export ORACLE_SID={{oracledb_server_meta.community.name}}
       export PATH=$PATH:$ORACLE_HOME/bin
   become: true
   become_user: oracle
@@ -65,7 +62,7 @@
     daemon_reload: yes
     enable: yes
 
-- name: Rename service file
+- name: Add oracledb service alias
   shell: ln -sf /run/systemd/generator.late/oracledb_ORCLCDB-{{oracledb_version}}.service  /lib/systemd/system/oracledb.service
 
 - name: Create soft link for oracle database
@@ -75,9 +72,14 @@
     state: link
     force: yes
   with_items:
-    - {src: '{{oracledb_dir}}/config/' ,dest: /data/config/oracledb}
-    - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/ORCLCDB.log ,dest: /data/logs/}
-    - {src: '{{oracledb_dir}}/cfgtoollogs/dbca/{{oracle_serverdb_meta.community.name}}/',dest: /data/logs/oracle}
+    - {src: /opt/oracle/ ,dest: /data/oracle}
+    - {src: /etc/oraInst.loc ,dest: /data/config/oraInst.loc}
+    - {src: /etc/oraInst.loc ,dest: /data/oracle/oraInst.loc}
+    - {src: /etc/oratab ,dest: /data/config/oratab}
+    - {src: /etc/oratab ,dest: /data/oracle/oratab}
+    - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/ORCLCDB.log ,dest: /data/logs/oracledb.log}
+    - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/',dest: /data/logs/oracle}
+    - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/',dest: /data/oracle/logs}
 
 # check service state
 - name: Check oracle Service     
@@ -88,5 +90,5 @@
 # Check version,
 # must use sudo sh -c to solve the no-root permission
 - name: check version
-  shell: sudo sh -c "echo ` rpm -qa |grep oracle-database-xe` >> /data/logs/install_version.txt"
+  shell: sudo sh -c "echo `rpm -qa |grep oracle-database-ee` >> /data/logs/install_version.txt"
 

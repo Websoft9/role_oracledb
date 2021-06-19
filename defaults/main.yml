@@ -1,7 +1,7 @@
 # oracledb password for administrator 【sys,system】
 oracledb_password: "oracle123456"
 
-oracledb_dir: "/data/db/oracle"
+oracledb_install_dir: "/data/oracledb_install"
 
 oracledb_version: "18c"
 
@@ -14,12 +14,3 @@ oracledb_users: []
 #    host: localhost
 #    password: password
 #    priv: 'example.*:ALL'
-
-# {{ testvar | lower }}
-oracledb_server_meta:
-  community:
-    name: "XE"
-    lower_name: "xe"
-  enterprise:
-    name: "EE"
-    lower_name: "ee"
