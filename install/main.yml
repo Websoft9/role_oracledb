@@ -22,15 +22,15 @@
   vars_prompt:
     - name: 'oracledb_version_selection'
       prompt: "\nPlease choose the number for OracleDB version [ 1/2 ] \n\n
-      1: oracle 18e(not support)\n
-      2: oracle 19e(support)\n"
+      1: oracle 18(not support)\n
+      2: oracle 19(support)\n"
       private: no
       default: 1
 
   vars:
     oracledb_version_select:
-      '1': '18e'
-      '2': '19e'
+      '1': '18c'
+      '2': '19c'
     oracledb_version: "{{oracledb_version_select[oracledb_version_selection]}}"
 
 
