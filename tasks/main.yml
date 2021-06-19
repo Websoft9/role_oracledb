@@ -47,7 +47,7 @@
     owner: oracle
     block: |
       export ORACLE_BASE=/opt/oracle
-      export ORACLE_HOME=/opt/oracle/product/{{oracledb_version}}/dbhome_1/bin
+      export ORACLE_HOME=/opt/oracle/product/{{oracledb_version}}/dbhome_1
       export ORACLE_SID=ORACLEDB
       export PATH=$PATH:$ORACLE_HOME/bin
   become: true
