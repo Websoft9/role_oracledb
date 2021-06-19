@@ -1,7 +1,4 @@
 # prepare
-- name: Create dir for as oracle database install_dir
-  file: path={{oracledb_dir}} recurse=yes state=directory
-
 - block: 
   - name: Download oracledb pre_install package
     get_url:
