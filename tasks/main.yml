@@ -48,7 +48,6 @@
     block: |
       export ORACLE_BASE={{oracledb_dir}} 
       export ORACLE_HOME={{oracledb_dir}}/product/{{oracledb_version}}/dbhome{{oracledb_server_meta.community.name}}
-      export ORACLE_SID={{oracledb_server_meta.community.name}}
       export PATH=$PATH:$ORACLE_HOME/bin
   become: true
   become_user: oracle
