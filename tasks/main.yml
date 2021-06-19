@@ -29,10 +29,8 @@
       - "oracle-database-ee-{{oracledb_version}}*.rpm"
   register: oracle_package_exists
 
-- debug: var=oracle_package_exists
-
 - fail: msg="The Oracle database package was not detected. Please download it first"  
-  when: oracle_rpm_exists is defined and not oracle_rpm_exists.stdout
+  when: oracle_package_exists is defined and not oracle_package_exists.files is not none
 
 - name: Install oracle database
   shell: yum -y localinstall oracle-database-ee-{{oracledb_version}}*.rpm
