@@ -91,9 +91,9 @@
     state: link
     force: yes
   with_items:
-    - {src: '/run/systemd/generator.late/oracledb_ORCLCDB-{{oracledb_version}}.service' ,dest: /lib/systemd/system/oracledb.service}
-    - {src: '/run/systemd/generator.late/oracledb_ORCLCDB-{{oracledb_version}}.service' ,dest: /lib/systemd/system/oracle.service}
-    - {src: '/run/systemd/generator.late/oracle-database-preinstall-{{oracledb_version}}-firstboot' ,dest: /lib/systemd/system/oracledb-firstboot.service}
+    - {src: '/run/systemd/generator.late/oracledb_ORCLCDB-{{oracledb_version}}.service' ,dest: /run/systemd/generator.late/oracle.service}
+    - {src: '/run/systemd/generator.late/oracledb_ORCLCDB-{{oracledb_version}}.service' ,dest:/run/systemd/generator.late/oracledb.service}
+    - {src: '/run/systemd/generator.late/oracle-database-preinstall-{{oracledb_version}}-firstboot' ,dest: /run/systemd/generator.late/oracledb-firstboot.service}
     - {src: /opt/oracle/ ,dest: /data/oracledb}
     - {src: /etc/oraInst.loc ,dest: /data/config/oraInst.loc}
     - {src: /etc/oraInst.loc ,dest: /data/oracledb/oraInst.loc}
