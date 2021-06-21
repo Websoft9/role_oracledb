@@ -62,10 +62,9 @@
   become: true
   become_user: oracle
 
-- name: Configure oracle DB init file and control file
+- name: Configure oracle DB init file 
   shell: |
     sed -i "s#<ORACLE_BASE>#/opt/oracle#g" /opt/oracle/product/{{oracledb_version}}/dbhome_1/dbs/init.ora 
-    sed -i "s#control_files = (ora_control1, ora_control2)#control_files = (/opt/oracle/oradata/ORCLCDB/control01.ctl, /opt/oracle/oradata/ORCLCDB/control02.ctl)#g" /opt/oracle/product/{{oracledb_version}}/dbhome_1/dbs/init.ora
 
 - name: Create init dir for oracle DB
   file: path={{item}} recurse=yes state=directory
@@ -103,6 +102,8 @@
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: /data/logs/oracle}
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: /data/oracle/logs}
     - {src: /opt/oracle/product/19c/dbhome_1/dbs/init.ora,dest: /opt/oracle/product/19c/dbhome_1/dbs/initORACLEDB.ora}
+    - {src: /opt/oracle/oradata/ORCLCDB/control01.ctl,dest: /opt/oracle/product/19c/dbhome_1/dbs/ora_control1}
+    - {src: /opt/oracle/oradata/ORCLCDB/control02.ctl,dest: /opt/oracle/product/19c/dbhome_1/dbs/ora_control2}
 
 # check service state
 - name: Check Oracle DB Service     
