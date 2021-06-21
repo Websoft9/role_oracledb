@@ -36,8 +36,6 @@
   shell: yum -y localinstall oracle-database-ee-{{oracledb_version}}*.rpm
   args:
     chdir: '{{oracledb_install_dir}}'
-  async: 0
-  poll: 2
 
 # oracle db configuration
 - name: Oracle DB delete initializes file for sec_installation
@@ -46,9 +44,6 @@
 
 - name: Oracle DB initializes the configuration for the first time, time is long, please be patient
   shell: (echo {{oracledb_password}}; echo {{oracledb_password}};) | /etc/init.d/oracledb_ORCLCDB-{{oracledb_version}} configure
-  async: 0
-  poll: 2
-
 
 - name: Oracle DB ENV configure
   blockinfile:
