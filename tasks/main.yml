@@ -91,16 +91,16 @@
   with_items:
     - {src: '/run/systemd/generator.late/oracledb_ORCLCDB-{{oracledb_version}}.service' ,dest: /lib/systemd/system/oracledb.service}
     - {src: '/run/systemd/generator.late/oracledb_ORCLCDB-{{oracledb_version}}.service' ,dest: /lib/systemd/system/oracle.service}
-    - {src: /opt/oracle/ ,dest: /data/oracle}
+    - {src: /opt/oracle/ ,dest: /data/oracledb}
     - {src: /etc/oraInst.loc ,dest: /data/config/oraInst.loc}
-    - {src: /etc/oraInst.loc ,dest: /data/oracle/oraInst.loc}
+    - {src: /etc/oraInst.loc ,dest: /data/oracledb/oraInst.loc}
     - {src: /etc/oratab ,dest: /data/config/oratab}
-    - {src: /etc/oratab ,dest: /data/oracle/oratab}
+    - {src: /etc/oratab ,dest: /data/oracledb/oratab}
     - {src: '/etc/sysconfig/oracledb_ORCLCDB-{{oracledb_version}}.conf' ,dest: /data/config/oracledb.conf}
-    - {src: '/etc/sysconfig/oracledb_ORCLCDB-{{oracledb_version}}.conf' ,dest: /data/oracle/oracledb.conf}
+    - {src: '/etc/sysconfig/oracledb_ORCLCDB-{{oracledb_version}}.conf' ,dest: /data/oracledb/oracledb.conf}
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/ORCLCDB.log ,dest: /data/logs/oracledb.log}
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: /data/logs/oracle}
-    - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: /data/oracle/logs}
+    - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: /data/oracledb/logs}
     - {src: /opt/oracle/product/19c/dbhome_1/dbs/init.ora,dest: /opt/oracle/product/19c/dbhome_1/dbs/initORACLEDB.ora}
     - {src: /opt/oracle/oradata/ORCLCDB/control01.ctl,dest: /opt/oracle/product/19c/dbhome_1/dbs/ora_control1}
     - {src: /opt/oracle/oradata/ORCLCDB/control02.ctl,dest: /opt/oracle/product/19c/dbhome_1/dbs/ora_control2}
