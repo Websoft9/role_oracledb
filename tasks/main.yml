@@ -115,12 +115,6 @@
   notify: check_oracle_service
 
 # check service state
-- name: Check Oracle DB Service     
-  shell: systemctl status oracle | grep Active*
-  register: check_oracle_service
-  notify: check_oracle_service
-
-# check service state
 - name: Check oracledb-firstboot Service     
   shell: systemctl status oracle | grep Active*
   register: check_oracledb_firstboot_service
