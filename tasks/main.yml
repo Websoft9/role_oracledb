@@ -37,7 +37,11 @@
   args:
     chdir: '{{oracledb_install_dir}}'
 
-# Oracle configuration
+# oracle db configuration
+- name: Oracle DB delete initializes file for sec_installation
+  shell: /etc/init.d/oracledb_ORCLCDB-{{oracledb_version}} delete
+  failed_when: false
+
 - name: Oracle DB initializes the configuration for the first time, time is long, please be patient
   shell: (echo {{oracledb_password}}; echo {{oracledb_password}};) | /etc/init.d/oracledb_ORCLCDB-{{oracledb_version}} configure
 
