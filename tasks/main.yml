@@ -74,7 +74,7 @@
     - /opt/oracle/fast_recovery_area
 
 - name: Set dir permissive for oracle DB
-  shell: chown -R  oracle /opt/oracle/
+  shell: chown -R  oracle.oinstall /opt/oracle/
     
 - name: Restart and  Enable oracledb.service
   systemd:
