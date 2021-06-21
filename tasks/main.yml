@@ -78,11 +78,10 @@
 - name: Set dir permissive for oracle DB
   shell: chown -R  oracle.oinstall /opt/oracle/
     
-- name: Restart and  Enable oracledb.service
+- name: Restart oracledb.service
   systemd:
-    name: oracledb_ORCLCDB-{{oracledb_version}}
+    name: ['oracledb_ORCLCDB-{{oracledb_version}}',oracle-database-preinstall-19c-firstboot]
     state: restarted
-    daemon_reload: yes
     enabled: yes
  
 - name: Create soft link for oracle DB
@@ -94,6 +93,7 @@
   with_items:
     - {src: '/run/systemd/generator.late/oracledb_ORCLCDB-{{oracledb_version}}.service' ,dest: /lib/systemd/system/oracledb.service}
     - {src: '/run/systemd/generator.late/oracledb_ORCLCDB-{{oracledb_version}}.service' ,dest: /lib/systemd/system/oracle.service}
+    - {src: '/run/systemd/generator.late/oracle-database-preinstall-{{oracledb_version}}-firstboot' ,dest: /lib/systemd/system/oracledb-firstboot.service}
     - {src: /opt/oracle/ ,dest: /data/oracledb}
     - {src: /etc/oraInst.loc ,dest: /data/config/oraInst.loc}
     - {src: /etc/oraInst.loc ,dest: /data/oracledb/oraInst.loc}
@@ -113,6 +113,18 @@
   shell: systemctl status oracle | grep Active*
   register: check_oracle_service
   notify: check_oracle_service
+
+# check service state
+- name: Check Oracle DB Service     
+  shell: systemctl status oracle | grep Active*
+  register: check_oracle_service
+  notify: check_oracle_service
+
+# check service state
+- name: Check oracledb-firstboot Service     
+  shell: systemctl status oracle | grep Active*
+  register: check_oracledb_firstboot_service
+  notify: check_oracledb_firstboot_service
  
 # Check version,
 # must use sudo sh -c to solve the no-root permission

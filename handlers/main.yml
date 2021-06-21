@@ -1,3 +1,7 @@
 - name: check_oracle_service
   debug:
     var: check_oracle_service.stdout
+
+- name: check_oracledb_firstboot_service
+  debug:
+    var: check_oracledb_firstboot_service.stdout
