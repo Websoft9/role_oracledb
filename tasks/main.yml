@@ -58,8 +58,19 @@
   become: true
   become_user: oracle
 
-- name: configure oracledb init file
-  shell: sed -i 's#<ORACLE_BASE>#/opt/oracle#g' /opt/oracle/product/19c/dbhome_1/dbs/initORACLEDB.ora
+- name: Configure oracledb init file
+  lineinfile:
+      dest: /opt/oracle/product/19c/dbhome_1/dbs/initORACLEDB.ora
+      regexp: "<ORACLE_BASE>"
+      line: "/opt/oracle"
+      backrefs: yes
+
+- name: Configure oracledb control file
+  lineinfile:
+      dest: /opt/oracle/product/19c/dbhome_1/dbs/initORACLEDB.ora
+      regexp: "control_files = (ora_control1, ora_control2)"
+      line: "control_files = (/opt/oracle/oradata/ORCLCDB/control01.ctl, /opt/oracle/oradata/ORCLCDB/control02.ctl)"
+      backrefs: yes
 
 - name: Create init dir for oracledb
   file: path={{item}} recurse=yes state=directory
