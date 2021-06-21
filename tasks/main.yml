@@ -1,47 +1,47 @@
 # prepare
 - block: 
-  - name: Download oracledb pre_install package
+  - name: Download oracle DB pre_install package
     get_url:
       url: https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/oracle-database-preinstall-{{oracledb_version}}-1.0-1.el7.x86_64.rpm
       dest: '{{oracledb_install_dir}}'
 
-  - name: Install Oracle pre_install 
+  - name: Install Oracle DB pre_install 
     shell:  yum -y localinstall oracle-database-preinstall-{{oracledb_version}}-1.0-1.el7.x86_64.rpm
     args:
       chdir: '{{oracledb_install_dir}}'
 
-  - name: Delete oracledb pre_install package 
+  - name: Delete oracle DB pre_install package 
     shell: rm -rf {{oracledb_install_dir}}/oracle-database-preinstall-*
 
   when: ansible_distribution == "CentOS"
 
-- name: Install Oracledb pre_install
+- name: Install Oracle DB pre_install
   yum:
     name: oracle-database-preinstall-{{oracledb_version}}
     update_cache: yes
   when: ansible_distribution == "OracleLinux"
 
 # install oracle database
-- name: Check the oracle package exists
+- name: Check the oracle DB package exists
   find: 
     paths: '{{oracledb_install_dir}}'
     patterns:
       - "oracle-database-ee-{{oracledb_version}}*.rpm"
   register: oracledb_package
 
-- fail: msg="The Oracle database package was not detected. Please download it first"  
+- fail: msg="The Oracle DB package was not detected. Please download it first"  
   when: oracledb_package is defined and oracledb_package.files == []
 
-- name: Install oracle database, time is long, please be patient
+- name: Install oracle DB, time is long, please be patient
   shell: yum -y localinstall oracle-database-ee-{{oracledb_version}}*.rpm
   args:
     chdir: '{{oracledb_install_dir}}'
 
 # Oracle configuration
-- name: Set oracle database password, time is long, please be patient
+- name: Oracle DB initializes the configuration for the first time, time is long, please be patient
   shell: (echo {{oracledb_password}}; echo {{oracledb_password}};) | /etc/init.d/oracledb_ORCLCDB-{{oracledb_version}} configure
 
-- name: Oracle database configure
+- name: Oracle DB ENV configure
   blockinfile:
     path: /home/oracle/.bash_profile
     owner: oracle
@@ -58,37 +58,37 @@
   become: true
   become_user: oracle
 
-- name: Configure oracledb init file
+- name: Configure oracle DB init file
   lineinfile:
       dest: /opt/oracle/product/19c/dbhome_1/dbs/initORACLEDB.ora
       regexp: "<ORACLE_BASE>"
       line: "/opt/oracle"
       backrefs: yes
 
-- name: Configure oracledb control file
+- name: Configure oracle DB control file
   lineinfile:
       dest: /opt/oracle/product/19c/dbhome_1/dbs/initORACLEDB.ora
       regexp: "control_files = (ora_control1, ora_control2)"
       line: "control_files = (/opt/oracle/oradata/ORCLCDB/control01.ctl, /opt/oracle/oradata/ORCLCDB/control02.ctl)"
       backrefs: yes
 
-- name: Create init dir for oracledb
+- name: Create init dir for oracle DB
   file: path={{item}} recurse=yes state=directory
   with_items:
     - /opt/oracle/admin/orcl/adump
     - /opt/oracle/fast_recovery_area
 
-- name: Set dir permissive for oracledb
+- name: Set dir permissive for oracle DB
   shell: chown -R  oracle /opt/oracle/
     
-- name: Restart oracle.service
+- name: Restart and  Enable oracledb.service
   systemd:
     name: oracledb_ORCLCDB-{{oracledb_version}}
     state: restarted
     daemon_reload: yes
     enabled: yes
  
-- name: Create soft link for oracle database
+- name: Create soft link for oracle DB
   file:
     src: '{{item.src}}'
     dest: '{{item.dest}}'
@@ -110,13 +110,13 @@
     - {src: /opt/oracle/product/19c/dbhome_1/dbs/init.ora,dest: /opt/oracle/product/19c/dbhome_1/dbs/initORACLEDB.ora}
 
 # check service state
-- name: Check oracledb Service     
+- name: Check Oracle DB Service     
   shell: systemctl status oracle | grep Active*
   register: check_oracle_service
   notify: check_oracle_service
  
 # Check version,
 # must use sudo sh -c to solve the no-root permission
-- name: check version
+- name: check Oracle DB version
   shell: sudo sh -c "echo `rpm -qa |grep oracle-database-ee` >> /data/logs/install_version.txt"
 
