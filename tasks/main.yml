@@ -71,7 +71,7 @@
 
 - name: Configure oracle DB control file
   lineinfile:
-      dest: /opt/oracle/product/19c/dbhome_1/dbs/initORACLEDB.ora
+      dest: /opt/oracle/product/19c/dbhome_1/dbs/init.ora
       regexp: "control_files = (ora_control1, ora_control2)"
       line: "control_files = (/opt/oracle/oradata/ORCLCDB/control01.ctl, /opt/oracle/oradata/ORCLCDB/control02.ctl)"
       backrefs: yes
