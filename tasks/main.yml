@@ -10,9 +10,6 @@
     args:
       chdir: '{{oracledb_install_dir}}'
 
-  - name: Delete oracle DB pre_install package 
-    shell: rm -rf {{oracledb_install_dir}}/oracle-database-preinstall-*
-
   when: ansible_distribution == "CentOS"
 
 - name: Install Oracle DB pre_install
@@ -92,18 +89,18 @@
     force: yes
   with_items:
     - {src: '/run/systemd/generator.late/oracledb_ORCLCDB-{{oracledb_version}}.service' ,dest: /run/systemd/generator.late/oracle.service}
-    - {src: '/run/systemd/generator.late/oracledb_ORCLCDB-{{oracledb_version}}.service' ,dest:/run/systemd/generator.late/oracledb.service}
+    - {src: '/run/systemd/generator.late/oracledb_ORCLCDB-{{oracledb_version}}.service' ,dest: /run/systemd/generator.late/oracledb.service}
     - {src: '/run/systemd/generator.late/oracle-database-preinstall-{{oracledb_version}}-firstboot' ,dest: /run/systemd/generator.late/oracledb-firstboot.service}
-    - {src: /opt/oracle/ ,dest: /data/oracledb}
+    - {src: /opt/oracle/ ,dest: '{{oracledb_install_dir}}/oracle'}
     - {src: /etc/oraInst.loc ,dest: /data/config/oraInst.loc}
-    - {src: /etc/oraInst.loc ,dest: /data/oracledb/oraInst.loc}
+    - {src: /etc/oraInst.loc ,dest: '{{oracledb_install_dir}}/oracle/oraInst.loc'}
     - {src: /etc/oratab ,dest: /data/config/oratab}
-    - {src: /etc/oratab ,dest: /data/oracledb/oratab}
+    - {src: /etc/oratab ,dest: '{{oracledb_install_dir}}/oracle/oratab'}
     - {src: '/etc/sysconfig/oracledb_ORCLCDB-{{oracledb_version}}.conf' ,dest: /data/config/oracledb.conf}
-    - {src: '/etc/sysconfig/oracledb_ORCLCDB-{{oracledb_version}}.conf' ,dest: /data/oracledb/oracledb.conf}
+    - {src: '/etc/sysconfig/oracledb_ORCLCDB-{{oracledb_version}}.conf' ,dest: '{{oracledb_install_dir}}/oracle/oracledb.conf'}
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/ORCLCDB.log ,dest: /data/logs/oracledb.log}
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: /data/logs/oracle}
-    - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: /data/oracledb/logs}
+    - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: '{{oracledb_install_dir}}/oracle/logs'}
     - {src: /opt/oracle/product/19c/dbhome_1/dbs/init.ora,dest: /opt/oracle/product/19c/dbhome_1/dbs/initORACLEDB.ora}
     - {src: /opt/oracle/oradata/ORCLCDB/control01.ctl,dest: /opt/oracle/product/19c/dbhome_1/dbs/ora_control1}
     - {src: /opt/oracle/oradata/ORCLCDB/control02.ctl,dest: /opt/oracle/product/19c/dbhome_1/dbs/ora_control2}
