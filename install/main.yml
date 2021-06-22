@@ -6,9 +6,9 @@
 
   vars_prompt:
     - name: 'oracledb_selection'
-      prompt: "\n Whether it is official[ y/n ] \n\n
-      Yes, it's the official version\n
-      No, it's not official\n"
+      prompt: "\n Have you reviewed and accept the Oracle License Agreement https://www.oracle.com/technetwork/licenses/standard-license-152015.html#licenseContent [ y/n ] \n\n
+      Yes, I have reviewed and accept the Oracle License Agreement \n
+      No, I have not reviewed and accept the Oracle License Agreement\n"
       private: no
 
     - name: 'oracledb_version_selection'
