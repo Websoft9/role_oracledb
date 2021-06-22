@@ -1,7 +1,7 @@
 # oracledb password for administrator 【sys,system】
 oracledb_password: "oracle123456"
 
-oracledb_install_dir: "/data/oracledb"
+oracledb_work_dir: "/data/oracledb"
 
 oracledb_version: "18c"
 

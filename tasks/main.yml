@@ -3,12 +3,12 @@
   - name: Download oracle DB pre_install package
     get_url:
       url: https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/oracle-database-preinstall-{{oracledb_version}}-1.0-1.el7.x86_64.rpm
-      dest: '{{oracledb_install_dir}}'
+      dest: '{{oracledb_work_dir}}'
 
   - name: Install Oracle DB pre_install 
     shell:  yum -y localinstall oracle-database-preinstall-{{oracledb_version}}-1.0-1.el7.x86_64.rpm
     args:
-      chdir: '{{oracledb_install_dir}}'
+      chdir: '{{oracledb_work_dir}}'
 
   when: ansible_distribution == "CentOS"
 
@@ -19,20 +19,10 @@
   when: ansible_distribution == "OracleLinux"
 
 # install oracle database
-- name: Check the oracle DB package exists
-  find: 
-    paths: '{{oracledb_install_dir}}'
-    patterns:
-      - "oracle-database-ee-{{oracledb_version}}*.rpm"
-  register: oracledb_package
-
-- fail: msg="The Oracle DB package was not detected. Please download it first"  
-  when: oracledb_package is defined and oracledb_package.files == []
-
 - name: Install oracle DB, time is long, please be patient
   shell: yum -y localinstall oracle-database-ee-{{oracledb_version}}*.rpm
   args:
-    chdir: '{{oracledb_install_dir}}'
+    chdir: '{{oracledb_work_dir}}'
 
 # oracle db configuration
 - name: Delete Oracle DB initializes file for sec_installation
@@ -91,16 +81,16 @@
     - {src: '/run/systemd/generator.late/oracledb_ORCLCDB-{{oracledb_version}}.service' ,dest: /run/systemd/generator.late/oracle.service}
     - {src: '/run/systemd/generator.late/oracledb_ORCLCDB-{{oracledb_version}}.service' ,dest: /run/systemd/generator.late/oracledb.service}
     - {src: '/run/systemd/generator.late/oracle-database-preinstall-{{oracledb_version}}-firstboot' ,dest: /run/systemd/generator.late/oracledb-firstboot.service}
-    - {src: /opt/oracle/ ,dest: '{{oracledb_install_dir}}/oracle'}
+    - {src: /opt/oracle/ ,dest: '{{oracledb_work_dir}}/oracle'}
     - {src: /etc/oraInst.loc ,dest: /data/config/oraInst.loc}
-    - {src: /etc/oraInst.loc ,dest: '{{oracledb_install_dir}}/oracle/oraInst.loc'}
+    - {src: /etc/oraInst.loc ,dest: '{{oracledb_work_dir}}/oracle/oraInst.loc'}
     - {src: /etc/oratab ,dest: /data/config/oratab}
-    - {src: /etc/oratab ,dest: '{{oracledb_install_dir}}/oracle/oratab'}
+    - {src: /etc/oratab ,dest: '{{oracledb_work_dir}}/oracle/oratab'}
     - {src: '/etc/sysconfig/oracledb_ORCLCDB-{{oracledb_version}}.conf' ,dest: /data/config/oracledb.conf}
-    - {src: '/etc/sysconfig/oracledb_ORCLCDB-{{oracledb_version}}.conf' ,dest: '{{oracledb_install_dir}}/oracle/oracledb.conf'}
+    - {src: '/etc/sysconfig/oracledb_ORCLCDB-{{oracledb_version}}.conf' ,dest: '{{oracledb_work_dir}}/oracle/oracledb.conf'}
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/ORCLCDB.log ,dest: /data/logs/oracledb.log}
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: /data/logs/oracle}
-    - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: '{{oracledb_install_dir}}/oracle/logs'}
+    - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: '{{oracledb_work_dir}}/oracle/logs'}
     - {src: /opt/oracle/product/19c/dbhome_1/dbs/init.ora,dest: /opt/oracle/product/19c/dbhome_1/dbs/initORACLEDB.ora}
     - {src: /opt/oracle/oradata/ORCLCDB/control01.ctl,dest: /opt/oracle/product/19c/dbhome_1/dbs/ora_control1}
     - {src: /opt/oracle/oradata/ORCLCDB/control02.ctl,dest: /opt/oracle/product/19c/dbhome_1/dbs/ora_control2}

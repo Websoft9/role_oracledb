@@ -5,18 +5,23 @@
     - role_oracledb
 
   vars_prompt:
-    - name: 'oracledb_selection'
-      prompt: "\n Have you reviewed and accept the Oracle License Agreement https://www.oracle.com/technetwork/licenses/standard-license-152015.html#licenseContent [ y/n ] \n\n
-      Yes, I have reviewed and accept the Oracle License Agreement \n
-      No, I have not reviewed and accept the Oracle License Agreement\n"
-      private: no
-
     - name: 'oracledb_version_selection'
       prompt: "\nPlease choose the number for OracleDB version [ 1/2 ] \n\n
       1: oracle database ee 18c(not support)\n
       2: oracle database ee 19c(support)\n"
       private: no
       default: 1
+ 
+    - name: 'oracledb_package_dir'
+      prompt: "\nWhere is your OracleDB package directory?\n\n"
+      private: no
+      default: 1
+
+    - name: 'oracledb_selection'
+      prompt: "\n Have you reviewed and accept the Oracle License Agreement https://www.oracle.com/technetwork/licenses/standard-license-152015.html#licenseContent [ y/n ] \n\n
+      Yes, I have reviewed and accept the Oracle License Agreement \n
+      No, I have not reviewed and accept the Oracle License Agreement\n"
+      private: no
 
   vars:
     oracledb_select:
@@ -33,8 +38,24 @@
     oracledb_version: "{{oracledb_version_select[oracledb_version_selection]}}"
 
   pre_tasks:
+   - fail: msg=""
+     when: not oracledb_official
+
+   - fail: msg="exit, You did not enter the location of the OracleDB package"
+     when: oracledb_package_dir is none
+
+   - name: Check the oracle DB package exists
+     find: 
+       paths: '{{oracledb_package_dir}}'
+       patterns:
+         - "oracle-database-ee-{{oracledb_version}}*.rpm"
+     register: oracledb_package_exists
+
+    - fail: msg="The Oracle DB package was not detected. Please download it first"  
+      when: oracledb_package_exists is defined and oracledb_package_exists.files == []
+
     - debug:
-        msg: Will install oracle {{oracledb_version}} database
+        msg: Will install oracle {{oracledb_version}} database 
 
   roles:
     - {role: role_oracledb, tags: "role_oracledb"}  
