@@ -38,21 +38,19 @@
     oracledb_version: "{{oracledb_version_select[oracledb_version_selection]}}"
 
   pre_tasks:
-   - fail: msg=""
+   - fail: msg="Please reviewed and accept the Oracle License Agreement"
      when: not oracledb_official
 
    - fail: msg="exit, You did not enter the location of the OracleDB package"
      when: oracledb_package_dir is none
 
-   - name: Check the oracle DB package exists
-     find: 
-       paths: '{{oracledb_package_dir}}'
-       patterns:
-         - "oracle-database-ee-{{oracledb_version}}*.rpm"
-     register: oracledb_package_exists
+   - name: Check whether the oracledb package type
+     shell: >
+       file {{oracledb_package_dir}} |awk '{print $2}'
+     register: oracledb_package_type
 
-    - fail: msg="The Oracle DB package was not detected. Please download it first"  
-      when: oracledb_package_exists is defined and oracledb_package_exists.files == []
+    - fail: msg="Please download the RPM version of OracleDB"  
+      when: oracledb_package_type.stdout !="RPM"
 
     - debug:
         msg: Will install oracle {{oracledb_version}} database 

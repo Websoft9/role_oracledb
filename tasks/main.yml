@@ -20,9 +20,7 @@
 
 # install oracle database
 - name: Install oracle DB, time is long, please be patient
-  shell: yum -y localinstall oracle-database-ee-{{oracledb_version}}*.rpm
-  args:
-    chdir: '{{oracledb_package_dir}}'
+  shell: yum -y localinstall {{oracledb_package_dir}}
 
 # oracle db configuration
 - name: Delete Oracle DB initializes file for sec_installation
