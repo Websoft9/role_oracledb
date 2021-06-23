@@ -13,7 +13,7 @@
       default: 1
  
     - name: 'oracledb_package_dir'
-      prompt: "\nWhere is your OracleDB package directory?\n\n"
+      prompt: "\nPlease input your OracleDB package path (e.g /data/oracle-database-ee-19c-1.0-1.x86_64.rpm): \n\n"
       private: no
       default: 1
 
