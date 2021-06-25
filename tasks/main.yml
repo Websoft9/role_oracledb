@@ -30,14 +30,14 @@
 - name: Oracle DB initializes the configuration for the first time, time is long, please be patient
   shell: (echo {{oracledb_password}}; echo {{oracledb_password}};) | /etc/init.d/oracledb_ORCLCDB-{{oracledb_version}} configure
 
-- name: Oracle DB ENV configure
+- name: Oracle DB ENV configure, defeaut SID is ORCLCDB
   blockinfile:
     path: /home/oracle/.bash_profile
     owner: oracle
     block: |
       export ORACLE_BASE=/opt/oracle
       export ORACLE_HOME=/opt/oracle/product/{{oracledb_version}}/dbhome_1
-      export ORACLE_SID=
+      export ORACLE_SID=ORCLCDB
       export PATH=$PATH:$ORACLE_HOME/bin
   become: true
   become_user: oracle
@@ -89,7 +89,7 @@
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/ORCLCDB.log ,dest: /data/logs/oracledb.log}
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: /data/logs/oracle}
     - {src: /opt/oracle/cfgtoollogs/dbca/ORCLCDB/,dest: '{{oracledb_work_dir}}/oracle/logs'}
-    - {src: /opt/oracle/product/19c/dbhome_1/dbs/init.ora,dest: /opt/oracle/product/19c/dbhome_1/dbs/initORACLEDB.ora}
+    - {src: /opt/oracle/product/19c/dbhome_1/dbs/init.ora,dest: /opt/oracle/product/19c/dbhome_1/dbs/initORCLCDB.ora}
     - {src: /opt/oracle/oradata/ORCLCDB/control01.ctl,dest: /opt/oracle/product/19c/dbhome_1/dbs/ora_control1}
     - {src: /opt/oracle/oradata/ORCLCDB/control02.ctl,dest: /opt/oracle/product/19c/dbhome_1/dbs/ora_control2}
 
