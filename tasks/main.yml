@@ -28,7 +28,7 @@
   failed_when: false
 
 - name: Oracle DB initializes the configuration for the first time, time is long, please be patient
-  shell: (echo {{oracledb_password}}; echo {{oracledb_password}};) | /etc/init.d/oracledb_ORCLCDB-{{oracledb_version}} configure
+  shell: /etc/init.d/oracledb_ORCLCDB-{{oracledb_version}} configure
 
 - name: Oracle DB ENV configure, defeaut SID is ORCLCDB
   blockinfile:
@@ -64,8 +64,8 @@
   shell: chown -R  oracle.oinstall /opt/oracle/
     
 - name: Restart oracledb.service
-  systemd:
-    name: ['oracledb_ORCLCDB-{{oracledb_version}}',oracle-database-preinstall-19c-firstboot]
+  service:
+    name: 'oracledb_ORCLCDB-{{oracledb_version}}'
     state: restarted
     enabled: yes
  
