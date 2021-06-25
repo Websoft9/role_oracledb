@@ -32,7 +32,6 @@
       'n': False
     oracledb_official: "{{oracledb_official_select[oracledb_official_selection]}}"
 
-  vars:
     oracledb_version_select:
       '1': '18c'
       '2': '19c'
