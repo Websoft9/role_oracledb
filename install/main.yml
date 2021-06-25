@@ -53,8 +53,8 @@
    - fail: msg="Please download the RPM version of OracleDB"  
      when: oracledb_package_type.stdout !="RPM"
 
-  - debug:
-      msg: Will install oracle {{oracledb_version}} database 
+   - debug:
+       msg: Will install oracle {{oracledb_version}} database 
 
   roles:
     - {role: role_oracledb, tags: "role_oracledb"}  
