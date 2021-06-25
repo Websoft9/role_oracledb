@@ -53,6 +53,27 @@
     sed -i "s#diagnostic_dest='<ORACLE_BASE>'#ddiagnostic_dest='/opt/oracle#g" /opt/oracle/product/{{oracledb_version}}/dbhome_1/dbs/init.ora
     sed -i "s#control_files = (ora_control1, ora_control2)#control_files = (/opt/oracle/oradata/ORCLCDB/control01.ctl, /opt/oracle/oradata/ORCLCDB/control02.ctl)#g" /opt/oracle/product/{{oracledb_version}}/dbhome_1/dbs/init.ora
 
+- name: Configure listener for external access 
+  blockinfile:
+    path: /opt/oracle/product/19c/dbhome_1/network/admin/listener.ora
+    block: |
+      SID_LIST_LISTENER=
+        (SID_LIST=
+            (SID_DESC=
+              (GLOBAL_DBNAME=ORCLCDB)
+              (SID_NAME=ORCLCDB)
+              (ORACLE_HOME=/opt/oracle/product/19c/dbhome_1)
+            )
+        )
+
+      ADR_BASE_LISTENER = /opt/oracle/
+
+- name: Configure sqlnet 
+  blockinfile: 
+    path: /opt/oracle/product/19c/dbhome_1/network/admin/sqlnet.ora
+    block: |
+      SQLNET.ALLOWED_LOGON_VERSION_SERVER=11
+      SQLNET.ALLOWED_LOGON_VERSION_CLIENT=11
 
 - name: Create init dir for oracle DB
   file: path={{item}} recurse=yes state=directory
