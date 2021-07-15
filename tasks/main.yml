@@ -85,7 +85,12 @@
 
 - name: Set dir permissive for oracle DB
   shell: chown -R  oracle.oinstall /opt/oracle/
-    
+
+- name: Update OracleDB password
+  shell: echo "alter user sys identified by {{oracledb_password}};" |sqlplus sys/change_on_install as sysdba
+  become: true
+  become_user: oracle
+
 - name: Restart oracledb.service
   service:
     name: 'oracledb_ORCLCDB-{{oracledb_version}}'

@@ -24,6 +24,10 @@
       No, I have not reviewed and accept the Oracle License Agreement\n"
       private: no
 
+    - name: 'oracledb_password'
+      prompt: "\nPlease input your OracleDB password: \n\n"
+      private: no
+
   vars:
     oracledb_official_select:
       'Y': True
