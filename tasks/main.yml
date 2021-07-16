@@ -1,6 +1,6 @@
 # prepare
 - block: 
-  - name: Download oracle DB pre_install package
+  - name: Download Oracle DB pre_install package
     get_url:
       url: https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/oracle-database-preinstall-{{oracledb_version}}-1.0-1.el7.x86_64.rpm
       dest: '{{oracledb_work_dir}}'
@@ -19,7 +19,7 @@
   when: ansible_distribution == "OracleLinux"
 
 # install oracle database
-- name: Install oracle DB, time is long, please be patient
+- name: Install Oracle DB, time is long, please be patient
   shell: |
     rm -rf /opt/oracle
     yum -y localinstall {{oracledb_package_dir}}
@@ -32,9 +32,10 @@
 - name: Oracle DB initializes the configuration for the first time, time is long, please be patient
   shell: /etc/init.d/oracledb_ORCLCDB-{{oracledb_version}} configure
 
-- name: Oracle DB ENV configure, defeaut SID is ORCLCDB
+# ansible default shell is nologin shell
+- name: Oracle DB ENV configure, defeaut SID is ORCLCDB(nologin shell)
   blockinfile:
-    path: /home/oracle/.bash_profile
+    path: /home/oracle/.bashrc
     owner: oracle
     block: |
       export ORACLE_BASE=/opt/oracle
@@ -45,11 +46,11 @@
   become_user: oracle
 
 - name: Souce environment variables
-  shell: source /home/oracle/.bash_profile
+  shell: source /home/oracle/.bashrc
   become: true
   become_user: oracle
 
-- name: Change oracle DB init file 
+- name: Change Oracle DB init file 
   shell: |
     sed -i "s#db_recovery_file_dest='<ORACLE_BASE>/fast_recovery_area'#db_recovery_file_dest='/opt/oracle/fast_recovery_area'#g" /opt/oracle/product/{{oracledb_version}}/dbhome_1/dbs/init.ora
     sed -i "s#diagnostic_dest='<ORACLE_BASE>'#ddiagnostic_dest='/opt/oracle#g" /opt/oracle/product/{{oracledb_version}}/dbhome_1/dbs/init.ora
@@ -77,21 +78,60 @@
       SQLNET.ALLOWED_LOGON_VERSION_SERVER=11
       SQLNET.ALLOWED_LOGON_VERSION_CLIENT=11
 
-- name: Create init dir for oracle DB
+- name: Create init dir for Oracle DB
   file: path={{item}} recurse=yes state=directory
   with_items:
     - /opt/oracle/admin/orcl/adump
     - /opt/oracle/fast_recovery_area
 
-- name: Set dir permissive for oracle DB
+- name: Set dir permissive for Oracle DB
   shell: chown -R  oracle.oinstall /opt/oracle/
 
 - name: Update OracleDB password
-  shell: 
+  shell: |
+    source /home/oracle/.bashrc
     echo "alter user sys identified by {{oracledb_password}};" |sqlplus sys/change_on_install as sysdba
     echo "alter user system identified by {{oracledb_password}};" |sqlplus sys/change_on_install as sysdba
   become: true
   become_user: oracle
+  become_method: su
+
+# install and configure ords
+- name: Create ords directory 
+  file: 
+    path: "{{item}}"
+    state: directory
+    recurse: yes
+  with_items:
+    - /opt/oracle/ords/conf
+    - /opt/oracle/ords/standalone/doc_root
+
+- name: Copy ords package to remote
+  copy: 
+    src: package/ords.zip
+    dest: /opt/oracle/ords/standalone/doc_root/ords.zip
+
+- name: Unpack the ords. Zip
+  unarchive:
+    src: /opt/oracle/ords/standalone/doc_root/ords.zip
+    dest: /opt/oracle/ords/standalone/doc_root/
+
+- name: Configure Oracle DB ords 
+  shell: |
+    source /home/oracle/.bashrc
+    echo "@/opt/oracle/ords/standalone/doc_root/installer/ords_installer_privileges.sql sys" |sqlplus / as sysdba
+    echo "ALTER PLUGGABLE DATABASE ORCLPDB1 OPEN READ WRITE;" |sqlplus / as sysdba
+  become: true
+  become_user: oracle 
+  become_method: su
+
+- name: Copy ords configure file 
+  template:
+    src: standalone.properties
+    dest: /opt/oracle/ords/standalone/standalone.properties
+
+# start ords: cd /opt/oracle/ords/standalone; java -jar doc_root/ords.war install --parameterFile standalone.properties
+# need interaction 
 
 - name: Restart oracledb.service
   service:
@@ -99,7 +139,7 @@
     state: restarted
     enabled: yes
  
-- name: Create soft link for oracle DB
+- name: Create soft link for Oracle DB
   file:
     src: '{{item.src}}'
     dest: '{{item.dest}}'
